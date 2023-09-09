@@ -1,0 +1,18 @@
+#chat{
+   padding-bottom: 12px; 
+}
+
+html{
+    position: absolute;
+    left: 40%;
+    top: 0;
+}
+
+body{
+    color: white !important;
+    background-color: black !important;
+}
+
+#delete-button{
+    display: inline;
+}

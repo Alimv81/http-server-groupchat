@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>GroupChat Client View</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+<body>
+    <h1>Chat Room</h1>
+    <h4>send messages by pressing enter</h4>
+    <input type="text" id="message" placeholder="Type your message" onkeydown="sendMessageOnEnter(event)">
+    <button id="delete-button" onclick="deleteMessages()">Delete Messages</button>
+
+    <div id="chat"></div>
+    <script>
+        async function getMessages() {
+            const response = await fetch('/get_messages');
+            const messages = await response.json();
+            const chat = document.getElementById('chat');
+            chat.innerHTML = messages.map(message => `<p>${message}</p>`).join('');
+        }
+
+        async function sendMessageOnEnter(event) {
+            if (event.key === 'Enter') {
+                const messageInput = document.getElementById('message');
+                const message = messageInput.value;
+                messageInput.value = '';
+                await fetch('/send_message', {
+                    method: 'POST',
+                    body: `message=${encodeURIComponent(message)}`,
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                });
+                getMessages();
+            }
+        }
+
+        async function deleteMessages() {
+            await fetch('/delete_messages', {
+                method: 'DELETE'
+            });
+            getMessages();
+        }
+
+        getMessages();
+        setInterval(getMessages, 2000); // Poll for updates every 2 seconds
+    </script>
+</body>
+</html>
